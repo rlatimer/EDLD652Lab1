@@ -1,0 +1,10 @@
+library(tidyverse)
+library(here)
+library(rio)
+library(knitr)
+library(janitor)
+library(psych)
+library(sjPlot)
+library(sjmisc)
+
+rstats <- import(here("data", "rstats_tweets.rds"))

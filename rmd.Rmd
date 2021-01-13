@@ -3,8 +3,8 @@ title: "lab1"
 author: "Hyeonjin Cha"
 date: "1/13/2021"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -17,9 +17,9 @@ library(janitor)
 ```
 
 ## load the dataset
-
 ```{r rstats}
 rstats <- import(here("data", "rstats_tweets.rds")) %>% 
   clean_names() %>% 
   as_tibble()
+view(rstats)
 ```
