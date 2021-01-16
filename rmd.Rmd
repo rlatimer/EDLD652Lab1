@@ -9,11 +9,14 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+install.packages("patchwork")
 library(tidyverse)
 library(here)
 library(rio)
 library(knitr)
 library(janitor)
+library(patchwork)
+
 ```
 
 ## load the dataset
@@ -22,4 +25,26 @@ rstats <- import(here("data", "rstats_tweets.rds")) %>%
   clean_names() %>% 
   as_tibble()
 view(rstats)
+```
+
+```{r plot2}
+#create month variable from created_at column and cout the row numbers
+ 
+p2rstats  <- 
+  rstats %>%  
+   mutate(month = lubridate::round_date(created_at, unit = "month")) %>%
+     tibble::rowid_to_column("n") 
+
+#plot draft of plot 2
+ggplot(p2rstats, aes(month, n)) +
+  geom_smooth() +
+  xlab("Year (data summarized by month") +
+  ylab("Number of #rstats tweets") +
+  labs(title = "Growth of the #rstats hashtag on twitter over time")
+
+ # xlim(lubridate::as_datetime("2008-09-01 00:00:00"),lubridate::as_datetime("2019-01-01 00:00:00")) +
+  #ylim(0, 12000)
+  
+  
+   
 ```
