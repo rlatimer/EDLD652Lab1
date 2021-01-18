@@ -48,20 +48,26 @@ ggplot(sample,aes(fct_reorder(screen_name,n),n)) +
 ```{r plot2}
 #create month variable from created_at column and cout the row numbers
  
-p2rstats  <- 
+plot2  <- 
   rstats %>%  
-   mutate(month = lubridate::round_date(created_at, unit = "month")) %>%
-     tibble::rowid_to_column("n") 
+    count(month = lubridate::round_date(created_at,"month")) %>% 
+    
+  
 
 #plot draft of plot 2
 ggplot(p2rstats, aes(month, n)) +
-  geom_smooth() +
-  xlab("Year (data summarized by month") +
+  geom_smooth(color = "purple", se = F) +
+  geom_line() +
+  geom_area(fill ="dodgerblue2", alpha = 0.4) +
+  scale_color_manual(values = "Purple") +
+  xlab("Year (data summarized by month)") +
   ylab("Number of #rstats tweets") +
-  labs(title = "Growth of the #rstats hashtag on twitter over time")
+  labs(title = "Growth of the #rstats hashtag on twitter over time") +
+  coord_cartesian(xlim = lubridate::as_datetime(c("2008-01-01","2018-12-01")), 
+                  ylim = c(0,12000),
+                  expand = F)
 
- # xlim(lubridate::as_datetime("2008-09-01 00:00:00"),lubridate::as_datetime("2019-01-01 00:00:00")) +
-  #ylim(0, 12000)
+
   
   
    
