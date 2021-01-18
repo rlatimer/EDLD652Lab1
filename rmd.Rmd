@@ -32,11 +32,11 @@ view(rstats)
  
 p2rstats  <- 
   rstats %>%  
-   mutate(month = lubridate::round_date(created_at, unit = "month")) %>%
-     tibble::rowid_to_column("n") 
+    count(month = round_date(created_at,"month"))
 
 #plot draft of plot 2
 ggplot(p2rstats, aes(month, n)) +
+  geom_line() +
   geom_smooth() +
   xlab("Year (data summarized by month") +
   ylab("Number of #rstats tweets") +
