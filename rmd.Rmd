@@ -50,17 +50,13 @@ ggplot(sample,aes(fct_reorder(screen_name,n),n)) +
  
 plot2  <- 
   rstats %>%  
-    count(month = lubridate::round_date(created_at,"month")) %>% 
-    
-  
+    count(month = round_date(created_at,"month"))
 
 #plot draft of plot 2
 ggplot(p2rstats, aes(month, n)) +
-  geom_smooth(color = "purple", se = F) +
   geom_line() +
-  geom_area(fill ="dodgerblue2", alpha = 0.4) +
-  scale_color_manual(values = "Purple") +
-  xlab("Year (data summarized by month)") +
+  geom_smooth() +
+  xlab("Year (data summarized by month") +
   ylab("Number of #rstats tweets") +
   labs(title = "Growth of the #rstats hashtag on twitter over time") +
   coord_cartesian(xlim = lubridate::as_datetime(c("2008-01-01","2018-12-01")), 
