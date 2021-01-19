@@ -1,7 +1,7 @@
 ---
-title: "lab1"
-author: "Hyeonjin Cha"
-date: "1/13/2021"
+title: "EDLD652 Lab 1"
+author: "Hyeonjin Cha, Rachael Latimer, Tess Sameshima"
+date: "1/18/2021"
 output:
   html_document: default
   pdf_document: default
@@ -10,6 +10,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 #install.packages("patchwork")
+#install.packages("lubridate")
 library(tidyverse)
 library(here)
 library(rio)
@@ -22,25 +23,27 @@ library(lubridate)
 
 ```
 
-## load the dataset
+## Part 1. Load The Dataset
 ```{r rstats}
 rstats <- import(here("data", "rstats_tweets.rds")) %>% 
   clean_names() %>% 
   as_tibble()
-view(rstats)
+glimpse(rstats)
 ```
 
+## Part 2. Draft Plots
 ```{r plot1}
 top25<-rstats %>%
   count(screen_name,sort=TRUE)
-
 top25$screen_name <- factor(top25$screen_name) 
-fct_reorder(top25$screen_name,top25$n, .desc=TRUE)
 
-sample<-top25%>%
+fct_reorder(top25$screen_name,top25$n, .desc=TRUE)
+#how do we make sure this doesn't make up most of the knitted PDF? echo or eval won't do the job...
+
+data_plot1 <- top25%>%
   slice_head(n=25)
 
-ggplot(sample,aes(fct_reorder(screen_name,n),n)) +
+ggplot(data_plot1, aes(fct_reorder(screen_name,n),n)) +
   geom_col() +
   coord_flip()
 
@@ -49,12 +52,12 @@ ggplot(sample,aes(fct_reorder(screen_name,n),n)) +
 ```{r plot2}
 #create month variable from created_at column and cout the row numbers
  
-plot2  <- 
+data_plot2  <- 
   rstats %>%  
     count(month = round_date(created_at,"month"))
 
 #plot draft of plot 2
-ggplot(plot2, aes(month, n)) +
+ggplot(data_plot2, aes(month, n)) +
   geom_line() +
   geom_smooth() +
   xlab("Year (data summarized by month") +
@@ -63,9 +66,42 @@ ggplot(plot2, aes(month, n)) +
   coord_cartesian(xlim = lubridate::as_datetime(c("2008-01-01","2018-12-01")), 
                   ylim = c(0,12000),
                   expand = F)
-
-
-  
-  
    
 ```
+
+## Part 3. Refinied Plots
+```{r refined plots}
+#refined plot 1
+plot1_refined <- data_plot1 %>% 
+  ggplot(aes(fct_reorder(screen_name,n),n)) + 
+  geom_col(fill = "steelblue1", alpha = 0.7) + 
+  coord_flip() +
+  labs(title = "Most prolific #rstats tweeters", 
+       subtitle = "Top 25 screen names displayed",
+       x = "Twitter Screen Name",
+       y = "Count",
+       caption = "Data from Mike Kearny, distributed via #tidytuesday") + 
+  theme_minimal() +
+  theme(panel.grid.minor = element_blank(),
+        panel.grid.major.y = element_blank())
+plot1_refined
+
+
+#refined plot 2
+plot2_refined <- data_plot2 %>% 
+  ggplot(aes(x = month, y = n)) +
+  geom_line(color = "gray28", size = 1.5) +
+  geom_smooth(se = FALSE, color = "orchid1", size = 1.5) +
+  geom_area(fill = "slategray1", alpha = 0.6) +
+  coord_cartesian(
+    xlim = lubridate::as_datetime(c("2008-01-01","2018-12-01")), 
+    ylim = c(0,12000),
+    expand = F) + 
+  labs(title = "Growth of the #rstats hashtag on twitter over time",
+       x = "Year (data summarized by month)",
+       y = "Number of #rstats tweets",
+       caption = "Data from Mike Kearny, distributed via #tidytuesday") + 
+  theme_minimal() + 
+  theme(panel.grid.major = element_line(size = (1)),
+        panel.grid.minor = element_line(size = (0.5)))
+plot2_refined
