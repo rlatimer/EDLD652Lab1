@@ -35,9 +35,12 @@ glimpse(rstats)
 ```{r plot1}
 top25<-rstats %>%
   count(screen_name,sort=TRUE)
-top25$screen_name <- factor(top25$screen_name) 
 
-fct_reorder(top25$screen_name,top25$n, .desc=TRUE)
+top25 %>%
+  mutate(screen_name = factor(screen_name),
+         screen_name = fct_reorder(screen_name, n, .desc = TRUE))
+
+
 #how do we make sure this doesn't make up most of the knitted PDF? echo or eval won't do the job...
 
 data_plot1 <- top25%>%
